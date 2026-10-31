@@ -699,6 +699,7 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   position: relative;
+  z-index: 40;
 }
 
 .quiz-topbar-info {
@@ -797,6 +798,22 @@ body {
   background: var(--bg-tertiary);
 }
 
+/* Quiz Hamburger Menü Karartma Katmanı (Overlay) */
+.quiz-dropdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9998;
+  display: none;
+  animation: fadeIn 0.15s ease;
+}
+
+.quiz-dropdown-overlay.active {
+  display: block;
+}
+
 /* Quiz Hamburger Butonu & Menüsü */
 .quiz-menu-wrapper {
   position: relative;
@@ -809,25 +826,27 @@ body {
 }
 
 .quiz-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 270px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  padding: 0.65rem;
-  z-index: 80;
+  position: fixed !important;
+  top: 72px !important;
+  right: 1.25rem !important;
+  width: 280px !important;
+  max-width: calc(100vw - 2.5rem) !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-medium) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75) !important;
+  padding: 0.75rem !important;
+  z-index: 9999 !important;
   display: none;
   flex-direction: column;
-  gap: 0.25rem;
-  backdrop-filter: blur(16px);
+  gap: 0.35rem;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   animation: fadeIn 0.18s ease;
 }
 
 .quiz-dropdown-menu.active {
-  display: flex;
+  display: flex !important;
 }
 
 .dropdown-header {
@@ -1047,6 +1066,7 @@ body {
   margin-bottom: 2rem;
   box-shadow: var(--shadow-md);
   position: relative;
+  z-index: 1;
 }
 
 .question-header {
@@ -1930,7 +1950,8 @@ body {
   }
 
   .quiz-dropdown-menu {
-    width: calc(100vw - 2rem);
-    right: -0.5rem;
+    width: calc(100vw - 1.5rem) !important;
+    right: 0.75rem !important;
+    top: 68px !important;
   }
 }

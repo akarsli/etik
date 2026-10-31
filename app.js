@@ -50,6 +50,7 @@
   // Quiz Hamburger Menüsü & Mobil İstatistikler
   const quizHamburgerBtn = document.getElementById('quizHamburgerBtn');
   const quizDropdownMenu = document.getElementById('quizDropdownMenu');
+  const quizDropdownOverlay = document.getElementById('quizDropdownOverlay');
   const mobileStatCorrect = document.getElementById('mobileStatCorrect');
   const mobileStatWrong = document.getElementById('mobileStatWrong');
   const mobileQuizTimer = document.getElementById('mobileQuizTimer');
@@ -176,6 +177,7 @@
 
     // Açık menüleri kapat
     if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+    if (quizDropdownOverlay) quizDropdownOverlay.classList.remove('active');
     if (mobileNavMenu) mobileNavMenu.classList.remove('active');
 
     if (viewName === 'home') {
@@ -1139,18 +1141,28 @@
       });
     }
 
+    const closeQuizDropdown = () => {
+      if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+      if (quizDropdownOverlay) quizDropdownOverlay.classList.remove('active');
+    };
+
     // Quiz Ekranı Hamburger Menü Olayları
     if (quizHamburgerBtn && quizDropdownMenu) {
       quizHamburgerBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        quizDropdownMenu.classList.toggle('active');
+        const isOpen = quizDropdownMenu.classList.toggle('active');
+        if (quizDropdownOverlay) quizDropdownOverlay.classList.toggle('active', isOpen);
         if (mobileNavMenu) mobileNavMenu.classList.remove('active');
       });
     }
 
+    if (quizDropdownOverlay) {
+      quizDropdownOverlay.addEventListener('click', closeQuizDropdown);
+    }
+
     if (menuFinishBtn) {
       menuFinishBtn.addEventListener('click', () => {
-        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
         if (confirm('Quizi şimdi bitirip sonuçları ve yanlış soruları görmek istiyor musunuz?')) {
           finishQuiz();
         }
@@ -1159,14 +1171,14 @@
 
     if (menuDrawerBtn) {
       menuDrawerBtn.addEventListener('click', () => {
-        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
         openQuestionNavModal();
       });
     }
 
     if (menuNotesBtn) {
       menuNotesBtn.addEventListener('click', () => {
-        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
         if (state.activeQuiz) openNotesModal(state.activeQuiz);
       });
     }
@@ -1179,7 +1191,7 @@
         if (mobileModePracticeBtn) mobileModePracticeBtn.classList.toggle('active', state.mode === 'practice');
         if (mobileModeExamBtn) mobileModeExamBtn.classList.toggle('active', state.mode === 'exam');
         if (menuModeText) menuModeText.textContent = state.mode === 'practice' ? 'Mod: Pratik Modu' : 'Mod: Sınav Modu';
-        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
         if (views.quiz.classList.contains('active')) renderCurrentQuestion();
       });
     }
@@ -1187,13 +1199,13 @@
     if (menuThemeBtn) {
       menuThemeBtn.addEventListener('click', () => {
         toggleTheme();
-        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
       });
     }
 
     if (menuExitQuizBtn) {
       menuExitQuizBtn.addEventListener('click', () => {
-        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
         switchView('home');
       });
     }
@@ -1201,7 +1213,7 @@
     // Sayfa boşluğuna tıklanınca açık dropdown menüleri kapat
     document.addEventListener('click', (e) => {
       if (quizDropdownMenu && !quizDropdownMenu.contains(e.target) && e.target !== quizHamburgerBtn && !quizHamburgerBtn.contains(e.target)) {
-        quizDropdownMenu.classList.remove('active');
+        closeQuizDropdown();
       }
       if (mobileNavMenu && !mobileNavMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
         mobileNavMenu.classList.remove('active');
