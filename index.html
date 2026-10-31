@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mühendislik Etiği | Quiz ve Sınav Platformu</title>
+  <meta name="description" content="Mühendislik Etiği dersi quiz derlemeleri için interaktif test çözme ve analiz platformu.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Arka Plan Efekti -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Üst Navigasyon Çubuğu -->
+  <header class="navbar" id="mainHeader">
+    <div class="nav-container">
+      <div class="brand" id="brandBtn">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Mühendislik Etiği</span>
+          <span class="brand-subtitle">Quiz & Sınav Platformu</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Mod Seçici (Öğrenme / Sınav) -->
+        <div class="mode-toggle-group" title="Soru Çözüm Modu">
+          <button class="mode-btn active" id="modePracticeBtn" data-mode="practice">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span>Pratik Modu</span>
+          </button>
+          <button class="mode-btn" id="modeExamBtn" data-mode="exam">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Sınav Modu</span>
+          </button>
+        </div>
+
+        <!-- Tema Değiştirici -->
+        <button class="icon-btn" id="themeToggleBtn" aria-label="Temayı Değiştir" title="Karanlık/Aydınlık Tema">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <!-- Ana Sayfa Dönüş Butonu -->
+        <button class="btn btn-secondary btn-sm" id="navHomeBtn" style="display: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Bölümlere Dön</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Ana İçerik Konteyneri -->
+  <main class="main-container">
+    
+    <!-- 1. GÖRÜNÜM: KOLEKSİYON VE QUİZ SEÇİM EKRANI -->
+    <section class="view-section active" id="viewHome">
+      <div class="hero-section">
+        <div class="hero-badge">
+          <span class="badge-dot"></span> 750+ Soru & Tam Çözümlü Arşiv
+        </div>
+        <h1 class="hero-title">Çalışmak İstediğin Quiz Kaynağını Seç</h1>
+        <p class="hero-desc">
+          Klasörde bulunan iki derlemeden birini seçerek testleri tek tek çözebilir, anında açıklamaları görebilir veya gerçek sınav deneyimi yaşayabilirsin.
+        </p>
+      </div>
+
+      <!-- Kaynak / Dosya Seçim Kartları -->
+      <div class="source-cards-grid">
+        <!-- Yeni Quiz Derlemesi -->
+        <div class="source-card selected" id="sourceCardYeni" data-source="yeni">
+          <div class="source-card-header">
+            <div class="source-badge badge-emerald">Önerilen & Güncel</div>
+            <div class="source-radio">
+              <span class="radio-inner"></span>
+            </div>
+          </div>
+          <div class="source-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h2 class="source-title">quiz_derleme_yeni.txt</h2>
+          <p class="source-desc">
+            10 Bölüm • 199 Seçkin Soru. Doğru şıklar, net cevaplar ve ders notlarından açıklamalarla güncel derleme.
+          </p>
+          <div class="source-meta">
+            <span class="meta-item"><strong>10</strong> Quiz</span>
+            <span class="meta-dot">•</span>
+            <span class="meta-item"><strong>199</strong> Soru</span>
+            <span class="meta-dot">•</span>
+            <span class="meta-item">Çoktan Seçmeli</span>
+          </div>
+          <button class="btn btn-primary source-select-btn">Bu Kaynağı Seç</button>
+        </div>
+
+        <!-- Eski Quiz Derlemesi -->
+        <div class="source-card" id="sourceCardEski" data-source="eski">
+          <div class="source-card-header">
+            <div class="source-badge badge-blue">Kapsamlı Arşiv</div>
+            <div class="source-radio">
+              <span class="radio-inner"></span>
+            </div>
+          </div>
+          <div class="source-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <h2 class="source-title">quiz derleme eski.txt</h2>
+          <p class="source-desc">
+            10 Bölüm • 553 Kapsamlı Soru. Doğru/Yanlış, Çoktan Seçmeli ve Açık Uçlu soru çeşitliliğiyle derinlemesine hazırlık.
+          </p>
+          <div class="source-meta">
+            <span class="meta-item"><strong>10</strong> Quiz</span>
+            <span class="meta-dot">•</span>
+            <span class="meta-item"><strong>553</strong> Soru</span>
+            <span class="meta-dot">•</span>
+            <span class="meta-item">D/Y & Test & Klasik</span>
+          </div>
+          <button class="btn btn-secondary source-select-btn">Bu Kaynağı Seç</button>
+        </div>
+
+        <!-- Özel TXT Yükleme Kartı -->
+        <div class="source-card source-card-upload" id="sourceCardUpload">
+          <div class="source-card-header">
+            <div class="source-badge badge-purple">Dinamik Parser</div>
+          </div>
+          <div class="source-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <h2 class="source-title">Kendi .txt Dosyanı Yükle</h2>
+          <p class="source-desc">
+            Bilgisayarından herhangi bir quiz txt dosyasını seç, tarayıcında anında ayrıştırılsın ve çözmeye başla.
+          </p>
+          <label class="btn btn-outline upload-btn" for="fileInput">
+            <input type="file" id="fileInput" accept=".txt" style="display: none;">
+            <span>Dosya Seç (.txt)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Seçilen Kaynaktaki 10 Quiz Listesi -->
+      <div class="quiz-browser-section" id="quizBrowserSection">
+        <div class="browser-header">
+          <div>
+            <h2 class="browser-title" id="selectedSourceHeading">Yeni Quiz Derlemesi — Bölümler (10 Quiz)</h2>
+            <p class="browser-subtitle" id="selectedSourceSub">Çözmek istediğin quizi seç veya tüm soruları sırayla çözmeye başla.</p>
+          </div>
+          <div class="browser-actions">
+            <button class="btn btn-emerald" id="startAllQuizBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Tüm Bölümleri Sırayla Çöz</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quiz Listesi Grid -->
+        <div class="quiz-grid" id="quizListGrid">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. GÖRÜNÜM: QUİZ ÇÖZÜM TEST EKRANI -->
+    <section class="view-section" id="viewQuiz">
+      <!-- Quiz Üst Bilgi Barı -->
+      <div class="quiz-topbar">
+        <div class="quiz-topbar-info">
+          <span class="quiz-collection-pill" id="quizTopCollection">Yeni Derleme</span>
+          <h2 class="quiz-top-title" id="quizTopTitle">Quiz 1 - Etik ve Kurumsal Etik</h2>
+        </div>
+
+        <div class="quiz-stats-group">
+          <div class="stat-pill correct">
+            <span class="stat-label">Doğru</span>
+            <span class="stat-val" id="statCorrect">0</span>
+          </div>
+          <div class="stat-pill wrong">
+            <span class="stat-label">Yanlış</span>
+            <span class="stat-val" id="statWrong">0</span>
+          </div>
+          <div class="stat-pill timer" id="timerBox">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="stat-val" id="quizTimer">00:00</span>
+          </div>
+          <button class="btn btn-outline btn-sm" id="finishEarlyBtn">
+            <span>Quizi Bitir</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- İlerleme Çubuğu -->
+      <div class="quiz-progress-wrap">
+        <div class="progress-info">
+          <span id="questionCounter">Soru 1 / 20</span>
+          <span id="progressPercent">%5 Tamamlandı</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBarFill" style="width: 5%;"></div>
+        </div>
+      </div>
+
+      <!-- Soru Kartı -->
+      <div class="question-card" id="questionCard">
+        <div class="question-header">
+          <div class="question-tags">
+            <span class="q-tag q-tag-num" id="qNumberTag">Soru 1</span>
+            <span class="q-tag q-tag-type" id="qTypeTag">Çoktan Seçmeli</span>
+            <span class="q-tag q-tag-warning" id="qReviewTag" style="display: none;">⚠️ Kontrol Et Notu</span>
+          </div>
+          <div class="keyboard-tip" title="Klavyedeki 1, 2, 3, 4 veya A, B, C, D tuşlarını kullanabilirsiniz">
+            ⌨️ Tuşlarla Çözülebilir
+          </div>
+        </div>
+
+        <div class="question-body">
+          <p class="question-text" id="questionText">Soru metni yükleniyor...</p>
+        </div>
+
+        <!-- Çoktan Seçmeli / Doğru-Yanlış Seçenekleri -->
+        <div class="options-grid" id="optionsContainer">
+          <!-- JS ile doldurulacak -->
+        </div>
+
+        <!-- Açık Uçlu Soru Özel Paneli -->
+        <div class="open-ended-box" id="openEndedBox" style="display: none;">
+          <p class="open-ended-prompt">Bu açık uçlu / klasik soruyu önce kafanda cevapla, ardından cevabı kontrol et:</p>
+          <button class="btn btn-secondary" id="showAnswerBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/></svg>
+            <span>Örnek Cevabı Göster</span>
+          </button>
+          <div class="open-ended-answer-content" id="openEndedAnswerContent" style="display: none;">
+            <h4>Cevap ve Açıklama:</h4>
+            <div class="answer-body-text" id="openEndedAnswerText"></div>
+            <div class="self-evaluate-buttons">
+              <span class="eval-label">Cevabını değerlendir:</span>
+              <button class="btn btn-emerald btn-sm" id="evalCorrectBtn">✓ Doğru Bildim</button>
+              <button class="btn btn-rose btn-sm" id="evalWrongBtn">✗ Bilemedim</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cevap Açıklama Kutusu (Pratik Modunda cevaplandıktan sonra görünür) -->
+        <div class="explanation-box" id="explanationBox" style="display: none;">
+          <div class="explanation-header">
+            <span class="exp-icon">💡</span>
+            <h4 class="exp-title" id="explanationTitle">Cevap Bilgisi</h4>
+          </div>
+          <p class="explanation-text" id="explanationText"></p>
+        </div>
+      </div>
+
+      <!-- Alt Kontrol Barı -->
+      <div class="quiz-bottombar">
+        <button class="btn btn-secondary" id="prevQuestionBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Önceki Soru</span>
+        </button>
+
+        <button class="btn btn-outline" id="questionListDrawerBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Soru Gezgini</span>
+        </button>
+
+        <button class="btn btn-primary" id="nextQuestionBtn">
+          <span>Sonraki Soru</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. GÖRÜNÜM: QUİZ SONUÇ VE ANALİZ EKRANI (İstenen Detaylı Fonksiyon) -->
+    <section class="view-section" id="viewResult">
+      <div class="result-container">
+        
+        <!-- Üst Tebrik & Skor Kartı -->
+        <div class="result-header-card">
+          <div class="score-circle-wrap">
+            <div class="score-circle" id="scoreCircle">
+              <span class="score-percentage" id="scorePercent">0%</span>
+              <span class="score-label">Başarı</span>
+            </div>
+          </div>
+
+          <div class="result-info">
+            <div class="result-badge" id="resultBadge">Sonuç Değerlendiriliyor</div>
+            <h2 class="result-title" id="resultTitle">Quiz Tamamlandı!</h2>
+            <p class="result-desc" id="resultDesc">Performans özetin ve yanlış yaptığın sorular aşağıda detaylandırılmıştır.</p>
+            
+            <div class="result-stats-row">
+              <div class="r-stat r-stat-total">
+                <span class="r-val" id="resTotal">0</span>
+                <span class="r-lab">Toplam Soru</span>
+              </div>
+              <div class="r-stat r-stat-correct">
+                <span class="r-val" id="resCorrect">0</span>
+                <span class="r-lab">Doğru</span>
+              </div>
+              <div class="r-stat r-stat-wrong">
+                <span class="r-val" id="resWrong">0</span>
+                <span class="r-lab">Yanlış</span>
+              </div>
+              <div class="r-stat r-stat-empty">
+                <span class="r-val" id="resEmpty">0</span>
+                <span class="r-lab">Boş</span>
+              </div>
+              <div class="r-stat r-stat-time">
+                <span class="r-val" id="resTime">00:00</span>
+                <span class="r-lab">Süre</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hızlı Aksiyon Butonları -->
+        <div class="result-actions-bar">
+          <button class="btn btn-rose" id="retryWrongOnlyBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span id="retryWrongText">Yalnızca Yanlışları Tekrar Çöz</span>
+          </button>
+          
+          <button class="btn btn-secondary" id="restartQuizBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Tüm Quizi Yeniden Çöz</span>
+          </button>
+
+          <button class="btn btn-emerald" id="nextQuizBtn">
+            <span>Sonraki Quize Geç</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+
+          <button class="btn btn-outline" id="resultBackHomeBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>Bölüm Listesi</span>
+          </button>
+        </div>
+
+        <!-- Yanlış Yapılan Soruların İncelenmesi (Filtre Sekmeleri) -->
+        <div class="wrong-questions-section">
+          <div class="section-title-row">
+            <div>
+              <h3 class="section-title">Detaylı Soru İncelemesi</h3>
+              <p class="section-desc">Hangi sorularda hata yaptığını, doğru cevapları ve detaylı açıklamaları aşağıdan inceleyebilirsin.</p>
+            </div>
+            
+            <div class="review-filter-tabs">
+              <button class="filter-tab active" data-filter="wrong" id="tabWrong">
+                <span>Yanlışlar</span>
+                <span class="tab-count" id="tabCountWrong">0</span>
+              </button>
+              <button class="filter-tab" data-filter="empty" id="tabEmpty">
+                <span>Boşlar</span>
+                <span class="tab-count" id="tabCountEmpty">0</span>
+              </button>
+              <button class="filter-tab" data-filter="correct" id="tabCorrect">
+                <span>Doğrular</span>
+                <span class="tab-count" id="tabCountCorrect">0</span>
+              </button>
+              <button class="filter-tab" data-filter="all" id="tabAll">
+                <span>Tümü</span>
+                <span class="tab-count" id="tabCountAll">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Yanlış & İnceleme Soru Kartları Listesi -->
+          <div class="review-questions-list" id="reviewQuestionsList">
+            <!-- JS ile doldurulacak -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Soru Gezgini Modalı (Drawer) -->
+  <div class="modal-overlay" id="questionNavModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Soru Gezgini</h3>
+        <button class="modal-close" id="closeNavModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="nav-legend">
+          <span class="legend-item"><span class="dot answered"></span> Cevaplandı</span>
+          <span class="legend-item"><span class="dot current"></span> Aktif</span>
+          <span class="legend-item"><span class="dot unvisited"></span> Çözülmedi</span>
+        </p>
+        <div class="nav-question-grid" id="navQuestionGrid">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bölüm Notları / Özeti Modalı -->
+  <div class="modal-overlay" id="notesModal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="notesModalTitle">Bölüm Notları ve İpuçları</h3>
+        <button class="modal-close" id="closeNotesModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="notes-content-box" id="notesModalContent">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scriptler -->
+  <script src="quiz_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
