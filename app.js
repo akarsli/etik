@@ -32,11 +32,37 @@
     result: document.getElementById('viewResult')
   };
 
+  // Masaüstü Nav Butonları
   const navHomeBtn = document.getElementById('navHomeBtn');
   const brandBtn = document.getElementById('brandBtn');
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   const modePracticeBtn = document.getElementById('modePracticeBtn');
   const modeExamBtn = document.getElementById('modeExamBtn');
+
+  // Mobil Navbar Menüsü
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileNavMenu = document.getElementById('mobileNavMenu');
+  const mobileNavHomeBtn = document.getElementById('mobileNavHomeBtn');
+  const mobileModePracticeBtn = document.getElementById('mobileModePracticeBtn');
+  const mobileModeExamBtn = document.getElementById('mobileModeExamBtn');
+  const mobileThemeToggleBtn = document.getElementById('mobileThemeToggleBtn');
+
+  // Quiz Hamburger Menüsü & Mobil İstatistikler
+  const quizHamburgerBtn = document.getElementById('quizHamburgerBtn');
+  const quizDropdownMenu = document.getElementById('quizDropdownMenu');
+  const mobileStatCorrect = document.getElementById('mobileStatCorrect');
+  const mobileStatWrong = document.getElementById('mobileStatWrong');
+  const mobileQuizTimer = document.getElementById('mobileQuizTimer');
+  const menuTimerPill = document.getElementById('menuTimerPill');
+  const menuStatCorrect = document.getElementById('menuStatCorrect');
+  const menuStatWrong = document.getElementById('menuStatWrong');
+  const menuFinishBtn = document.getElementById('menuFinishBtn');
+  const menuDrawerBtn = document.getElementById('menuDrawerBtn');
+  const menuNotesBtn = document.getElementById('menuNotesBtn');
+  const menuToggleModeBtn = document.getElementById('menuToggleModeBtn');
+  const menuModeText = document.getElementById('menuModeText');
+  const menuThemeBtn = document.getElementById('menuThemeBtn');
+  const menuExitQuizBtn = document.getElementById('menuExitQuizBtn');
 
   // Kaynak Seçim Kartları
   const sourceCardYeni = document.getElementById('sourceCardYeni');
@@ -148,11 +174,17 @@
     views[viewName].classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    // Açık menüleri kapat
+    if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+    if (mobileNavMenu) mobileNavMenu.classList.remove('active');
+
     if (viewName === 'home') {
       navHomeBtn.style.display = 'none';
+      if (mobileNavHomeBtn) mobileNavHomeBtn.style.display = 'none';
       stopTimer();
     } else {
       navHomeBtn.style.display = 'inline-flex';
+      if (mobileNavHomeBtn) mobileNavHomeBtn.style.display = 'flex';
     }
   }
 
@@ -243,6 +275,7 @@
   // Quiz Başlatma
   // ==========================================
   function startQuiz(quizObj, customQuestionList = null, isWrongRetry = false) {
+    clearAutoNextTimeout();
     state.activeQuiz = quizObj;
     state.isWrongOnlyRetry = isWrongRetry;
     state.activeQuestions = customQuestionList || quizObj.questions;
@@ -293,12 +326,19 @@
   function startTimer() {
     stopTimer();
     state.timerSeconds = 0;
-    quizTimer.textContent = '00:00';
+    const initialTime = '00:00';
+    quizTimer.textContent = initialTime;
+    if (mobileQuizTimer) mobileQuizTimer.textContent = initialTime;
+    if (menuTimerPill) menuTimerPill.textContent = initialTime;
+
     state.timerInterval = setInterval(() => {
       state.timerSeconds++;
       const m = Math.floor(state.timerSeconds / 60).toString().padStart(2, '0');
       const s = (state.timerSeconds % 60).toString().padStart(2, '0');
-      quizTimer.textContent = `${m}:${s}`;
+      const timeFormatted = `${m}:${s}`;
+      quizTimer.textContent = timeFormatted;
+      if (mobileQuizTimer) mobileQuizTimer.textContent = timeFormatted;
+      if (menuTimerPill) menuTimerPill.textContent = timeFormatted;
     }, 1000);
   }
 
@@ -399,8 +439,36 @@
     });
   }
 
+  // Otomatik Sonraki Soru Zamanlayıcısı (Pratik Modu İçin)
+  let autoNextTimeout = null;
+
+  function clearAutoNextTimeout() {
+    if (autoNextTimeout) {
+      clearTimeout(autoNextTimeout);
+      autoNextTimeout = null;
+    }
+  }
+
+  // Soru Kartına Akıllı Odaklanma (Sayfanın en başına zıplamayı önler)
+  function scrollToQuestionCard() {
+    const card = document.getElementById('questionCard');
+    if (card) {
+      const header = document.getElementById('mainHeader');
+      const navbarHeight = header ? header.offsetHeight : 65;
+      const rect = card.getBoundingClientRect();
+      
+      // Eğer soru kartının üst kısmı ekranın yukarısında kalmışsa veya çok aşağıdaysa odakla
+      if (rect.top < navbarHeight || rect.top > window.innerHeight * 0.45) {
+        const targetY = window.pageYOffset + rect.top - navbarHeight - 14;
+        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+      }
+    }
+  }
+
   // Seçenek Seçimi
   function handleOptionSelect(q, selectedOpt) {
+    clearAutoNextTimeout();
+
     const isCorrect = !!selectedOpt.isCorrect;
     state.userAnswers[q.id] = {
       selectedKey: selectedOpt.key,
@@ -414,8 +482,13 @@
 
     if (state.mode === 'practice') {
       renderCurrentQuestion();
+
+      // Pratik Modunda 1.5 saniye sonuç (doğru/yanlış ve açıklama) gösterildikten sonra otomatik diğer soruya geç
+      autoNextTimeout = setTimeout(() => {
+        goToNextQuestion();
+      }, 1500);
     } else {
-      // Sınav modunda sadece seçimi güncelle
+      // Sınav modunda sadece seçimi güncelle, kullanıcı soruyu kendisi değiştirir
       const allBtns = optionsContainer.querySelectorAll('.option-btn');
       allBtns.forEach(b => b.classList.toggle('selected', b.dataset.key === selectedOpt.key));
     }
@@ -423,6 +496,7 @@
 
   // Açık Uçlu Soru
   function renderOpenEndedQuestion(q, qAns) {
+    clearAutoNextTimeout();
     openEndedAnswerContent.style.display = 'none';
     showAnswerBtn.style.display = 'inline-flex';
     openEndedAnswerText.textContent = q.answerText || q.answerRaw || 'Cevap metni bulunamadı.';
@@ -438,6 +512,7 @@
     };
 
     evalCorrectBtn.onclick = () => {
+      clearAutoNextTimeout();
       state.userAnswers[q.id] = {
         selectedKey: 'Bilindi',
         selectedText: 'Kendini doğru olarak değerlendirdi',
@@ -450,6 +525,7 @@
     };
 
     evalWrongBtn.onclick = () => {
+      clearAutoNextTimeout();
       state.userAnswers[q.id] = {
         selectedKey: 'Bilinmedi',
         selectedText: 'Kendini eksik/bilemedi olarak değerlendirdi',
@@ -500,24 +576,30 @@
 
     statCorrect.textContent = correct;
     statWrong.textContent = wrong;
+    if (mobileStatCorrect) mobileStatCorrect.textContent = correct;
+    if (mobileStatWrong) mobileStatWrong.textContent = wrong;
+    if (menuStatCorrect) menuStatCorrect.textContent = correct;
+    if (menuStatWrong) menuStatWrong.textContent = wrong;
   }
 
   // Sonraki / Önceki Soru
   function goToNextQuestion() {
+    clearAutoNextTimeout();
     if (state.currentIndex < state.activeQuestions.length - 1) {
       state.currentIndex++;
       renderCurrentQuestion();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToQuestionCard();
     } else {
       finishQuiz();
     }
   }
 
   function goToPrevQuestion() {
+    clearAutoNextTimeout();
     if (state.currentIndex > 0) {
       state.currentIndex--;
       renderCurrentQuestion();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToQuestionCard();
     }
   }
 
@@ -526,6 +608,7 @@
   // (Kullanıcının İstediği Temel Fonksiyon)
   // ==========================================
   function finishQuiz() {
+    clearAutoNextTimeout();
     stopTimer();
 
     const total = state.activeQuestions.length;
@@ -1009,11 +1092,130 @@
     navHomeBtn.addEventListener('click', () => switchView('home'));
     themeToggleBtn.addEventListener('click', toggleTheme);
 
-    // Mod Değiştirici
+    // Mobil Navbar Menü Olayları
+    if (mobileMenuBtn && mobileNavMenu) {
+      mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileNavMenu.classList.toggle('active');
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+      });
+    }
+
+    if (mobileNavHomeBtn) {
+      mobileNavHomeBtn.addEventListener('click', () => {
+        if (mobileNavMenu) mobileNavMenu.classList.remove('active');
+        switchView('home');
+      });
+    }
+
+    if (mobileModePracticeBtn && mobileModeExamBtn) {
+      mobileModePracticeBtn.addEventListener('click', () => {
+        state.mode = 'practice';
+        modePracticeBtn.classList.add('active');
+        modeExamBtn.classList.remove('active');
+        mobileModePracticeBtn.classList.add('active');
+        mobileModeExamBtn.classList.remove('active');
+        if (menuModeText) menuModeText.textContent = 'Mod: Pratik Modu';
+        if (mobileNavMenu) mobileNavMenu.classList.remove('active');
+        if (views.quiz.classList.contains('active')) renderCurrentQuestion();
+      });
+
+      mobileModeExamBtn.addEventListener('click', () => {
+        state.mode = 'exam';
+        modeExamBtn.classList.add('active');
+        modePracticeBtn.classList.remove('active');
+        mobileModeExamBtn.classList.add('active');
+        mobileModePracticeBtn.classList.remove('active');
+        if (menuModeText) menuModeText.textContent = 'Mod: Sınav Modu';
+        if (mobileNavMenu) mobileNavMenu.classList.remove('active');
+        if (views.quiz.classList.contains('active')) renderCurrentQuestion();
+      });
+    }
+
+    if (mobileThemeToggleBtn) {
+      mobileThemeToggleBtn.addEventListener('click', () => {
+        toggleTheme();
+        if (mobileNavMenu) mobileNavMenu.classList.remove('active');
+      });
+    }
+
+    // Quiz Ekranı Hamburger Menü Olayları
+    if (quizHamburgerBtn && quizDropdownMenu) {
+      quizHamburgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quizDropdownMenu.classList.toggle('active');
+        if (mobileNavMenu) mobileNavMenu.classList.remove('active');
+      });
+    }
+
+    if (menuFinishBtn) {
+      menuFinishBtn.addEventListener('click', () => {
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        if (confirm('Quizi şimdi bitirip sonuçları ve yanlış soruları görmek istiyor musunuz?')) {
+          finishQuiz();
+        }
+      });
+    }
+
+    if (menuDrawerBtn) {
+      menuDrawerBtn.addEventListener('click', () => {
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        openQuestionNavModal();
+      });
+    }
+
+    if (menuNotesBtn) {
+      menuNotesBtn.addEventListener('click', () => {
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        if (state.activeQuiz) openNotesModal(state.activeQuiz);
+      });
+    }
+
+    if (menuToggleModeBtn) {
+      menuToggleModeBtn.addEventListener('click', () => {
+        state.mode = state.mode === 'practice' ? 'exam' : 'practice';
+        modePracticeBtn.classList.toggle('active', state.mode === 'practice');
+        modeExamBtn.classList.toggle('active', state.mode === 'exam');
+        if (mobileModePracticeBtn) mobileModePracticeBtn.classList.toggle('active', state.mode === 'practice');
+        if (mobileModeExamBtn) mobileModeExamBtn.classList.toggle('active', state.mode === 'exam');
+        if (menuModeText) menuModeText.textContent = state.mode === 'practice' ? 'Mod: Pratik Modu' : 'Mod: Sınav Modu';
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        if (views.quiz.classList.contains('active')) renderCurrentQuestion();
+      });
+    }
+
+    if (menuThemeBtn) {
+      menuThemeBtn.addEventListener('click', () => {
+        toggleTheme();
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+      });
+    }
+
+    if (menuExitQuizBtn) {
+      menuExitQuizBtn.addEventListener('click', () => {
+        if (quizDropdownMenu) quizDropdownMenu.classList.remove('active');
+        switchView('home');
+      });
+    }
+
+    // Sayfa boşluğuna tıklanınca açık dropdown menüleri kapat
+    document.addEventListener('click', (e) => {
+      if (quizDropdownMenu && !quizDropdownMenu.contains(e.target) && e.target !== quizHamburgerBtn && !quizHamburgerBtn.contains(e.target)) {
+        quizDropdownMenu.classList.remove('active');
+      }
+      if (mobileNavMenu && !mobileNavMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+        mobileNavMenu.classList.remove('active');
+      }
+    });
+
+    // Mod Değiştirici (Masaüstü)
     modePracticeBtn.addEventListener('click', () => {
       state.mode = 'practice';
       modePracticeBtn.classList.add('active');
       modeExamBtn.classList.remove('active');
+      if (mobileModePracticeBtn) mobileModePracticeBtn.classList.add('active');
+      if (mobileModeExamBtn) mobileModeExamBtn.classList.remove('active');
+      if (menuModeText) menuModeText.textContent = 'Mod: Pratik Modu';
       if (views.quiz.classList.contains('active')) renderCurrentQuestion();
     });
 
@@ -1021,6 +1223,9 @@
       state.mode = 'exam';
       modeExamBtn.classList.add('active');
       modePracticeBtn.classList.remove('active');
+      if (mobileModeExamBtn) mobileModeExamBtn.classList.add('active');
+      if (mobileModePracticeBtn) mobileModePracticeBtn.classList.remove('active');
+      if (menuModeText) menuModeText.textContent = 'Mod: Sınav Modu';
       if (views.quiz.classList.contains('active')) renderCurrentQuestion();
     });
 
